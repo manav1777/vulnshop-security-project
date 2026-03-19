@@ -5,9 +5,23 @@
     <h1>Welcome, {{ username }}! 🎉</h1>
     <div class="alert alert-success mt-4">
         <strong>✅ Login Successful!</strong><br>
-        You are now logged in as: <strong>{{ username }}</strong>
+        You are now logged in as: <strong>{{ username }}</strong><br>
+        Your user ID: <strong>{{ user_id }}</strong>
     </div>
-    <p class="lead mt-4">This proves the SQL injection worked!</p>
-    <a href="/logout" class="btn btn-danger mt-3">Logout</a>
+    
+    <div class="mt-4">
+        <a href="/orders?user_id={{ user_id }}" class="btn btn-primary btn-lg">View My Orders</a>
+        <a href="/logout" class="btn btn-danger btn-lg">Logout</a>
+    </div>
+    
+    <div class="alert alert-warning mt-4">
+        <strong>🔓 Week 4 Vulnerabilities:</strong><br>
+        <small>
+        1. Plaintext passwords in database<br>
+        2. Predictable session (user_id in URL)<br>
+        3. Account enumeration (login error messages)<br>
+        4. Broken access control - try changing user_id parameter!
+        </small>
+    </div>
 </div>
 {% endblock %}
