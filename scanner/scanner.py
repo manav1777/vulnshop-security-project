@@ -3,6 +3,7 @@ from colorama import init, Fore, Style
 from modules.sqli_detector import SQLiDetector
 from modules.xss_detector import XSSDetector
 from modules.access_control import AccessControlTester
+from modules.auth_tester import AuthenticationTester
 from datetime import datetime
 
 # Initialize colorama
@@ -15,6 +16,7 @@ def print_banner():
 ║                                                  ║
 ║           VulnShop Security Scanner              ║
 ║              by Manav Patel                      ║
+║                 Version 2.0                      ║
 ║                                                  ║
 ╚══════════════════════════════════════════════════╝
 {Style.RESET_ALL}
@@ -22,7 +24,7 @@ def print_banner():
     print(banner)
 
 def generate_report(all_vulnerabilities, target_url):
-    """Generate HTML report"""
+    """Generate HTML report with remediation recommendations"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     severity_colors = {
@@ -30,6 +32,17 @@ def generate_report(all_vulnerabilities, target_url):
         'HIGH': '#fd7e14',
         'MEDIUM': '#ffc107',
         'LOW': '#17a2b8'
+    }
+    
+    # Remediation recommendations
+    remediation = {
+        'SQL Injection': 'Use parameterized queries (prepared statements) instead of string concatenation. Never trust user input.',
+        'SQL Injection (Error-Based)': 'Disable detailed error messages in production. Use generic error pages.',
+        'Stored XSS': 'Remove |safe filter from templates. Always escape user input before rendering. Use Content Security Policy headers.',
+        'Broken Access Control (IDOR)': 'Verify user owns the resource before displaying it. Check session user_id matches requested user_id.',
+        'Account Enumeration': 'Use identical error messages for all login failures: "Invalid username or password"',
+        'Plaintext Password Storage': 'Hash passwords using bcrypt with salt. Never store plaintext passwords.',
+        'Weak Session Management': 'Use cryptographically random session tokens. Implement HTTPOnly and Secure flags on cookies.'
     }
     
     html = f"""
@@ -44,10 +57,14 @@ def generate_report(all_vulnerabilities, target_url):
             .vuln {{ background: white; padding: 20px; margin: 20px 0; border-radius: 5px; border-left: 5px solid; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
             .critical {{ border-left-color: #dc3545; }}
             .high {{ border-left-color: #fd7e14; }}
+            .medium {{ border-left-color: #ffc107; }}
+            .low {{ border-left-color: #17a2b8; }}
             .severity {{ display: inline-block; padding: 5px 15px; border-radius: 3px; color: white; font-weight: bold; }}
             .metric {{ display: inline-block; margin: 10px 20px 10px 0; }}
             .metric-value {{ font-size: 36px; font-weight: bold; color: #2c3e50; }}
             .metric-label {{ color: #7f8c8d; }}
+            .remediation {{ background: #e8f5e9; padding: 15px; margin: 10px 0; border-left: 4px solid #4caf50; border-radius: 3px; }}
+            .remediation-title {{ font-weight: bold; color: #2e7d32; margin-bottom: 5px; }}
         </style>
     </head>
     <body>
@@ -55,7 +72,7 @@ def generate_report(all_vulnerabilities, target_url):
             <h1>🔒 VulnShop Security Scan Report</h1>
             <p>Target: {target_url}</p>
             <p>Scan Date: {timestamp}</p>
-            <p>Scanner: VulnShop Security Scanner v1.0</p>
+            <p>Scanner: VulnShop Security Scanner v2.0</p>
         </div>
         
         <div class="summary">
@@ -72,11 +89,18 @@ def generate_report(all_vulnerabilities, target_url):
                 <div class="metric-value">{sum(1 for v in all_vulnerabilities if v['severity'] == 'HIGH')}</div>
                 <div class="metric-label">High</div>
             </div>
+            <div class="metric">
+                <div class="metric-value">{sum(1 for v in all_vulnerabilities if v['severity'] == 'MEDIUM')}</div>
+                <div class="metric-label">Medium</div>
+            </div>
         </div>
     """
     
     for i, vuln in enumerate(all_vulnerabilities, 1):
         severity_class = vuln['severity'].lower()
+        vuln_type = vuln['type']
+        remediation_text = remediation.get(vuln_type, 'Implement security best practices for this vulnerability type.')
+        
         html += f"""
         <div class="vuln {severity_class}">
             <h3>#{i} - {vuln['type']}</h3>
@@ -85,6 +109,10 @@ def generate_report(all_vulnerabilities, target_url):
             <p><strong>Payload:</strong> <code>{vuln['payload']}</code></p>
             <p><strong>Description:</strong> {vuln['description']}</p>
             <p><strong>Impact:</strong> {vuln['impact']}</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>{remediation_text}</div>
+            </div>
         </div>
         """
     
@@ -130,6 +158,16 @@ def main():
     ac = AccessControlTester(target_url)
     ac.test_idor()
     all_vulnerabilities.extend(ac.get_results())
+    
+    # Run Authentication tests
+    print(f"\n{Fore.YELLOW}{'='*60}{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}  MODULE 4: Authentication & Session Security{Style.RESET_ALL}")
+    print(f"{Fore.YELLOW}{'='*60}{Style.RESET_ALL}")
+    auth = AuthenticationTester(target_url)
+    auth.test_account_enumeration()
+    auth.test_plaintext_passwords()
+    auth.test_session_security()
+    all_vulnerabilities.extend(auth.get_results())
     
     # Generate report
     print(f"\n{Fore.YELLOW}{'='*60}{Style.RESET_ALL}")

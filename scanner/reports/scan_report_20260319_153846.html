@@ -1,0 +1,131 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Security Scan Report - VulnShop</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+            .header { background: #2c3e50; color: white; padding: 30px; border-radius: 5px; }
+            .summary { background: white; padding: 20px; margin: 20px 0; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .vuln { background: white; padding: 20px; margin: 20px 0; border-radius: 5px; border-left: 5px solid; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .critical { border-left-color: #dc3545; }
+            .high { border-left-color: #fd7e14; }
+            .medium { border-left-color: #ffc107; }
+            .low { border-left-color: #17a2b8; }
+            .severity { display: inline-block; padding: 5px 15px; border-radius: 3px; color: white; font-weight: bold; }
+            .metric { display: inline-block; margin: 10px 20px 10px 0; }
+            .metric-value { font-size: 36px; font-weight: bold; color: #2c3e50; }
+            .metric-label { color: #7f8c8d; }
+            .remediation { background: #e8f5e9; padding: 15px; margin: 10px 0; border-left: 4px solid #4caf50; border-radius: 3px; }
+            .remediation-title { font-weight: bold; color: #2e7d32; margin-bottom: 5px; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>🔒 VulnShop Security Scan Report</h1>
+            <p>Target: http://127.0.0.1:5000</p>
+            <p>Scan Date: 2026-03-19 15:38:46</p>
+            <p>Scanner: VulnShop Security Scanner v2.0</p>
+        </div>
+        
+        <div class="summary">
+            <h2>Executive Summary</h2>
+            <div class="metric">
+                <div class="metric-value">6</div>
+                <div class="metric-label">Total Vulnerabilities</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">4</div>
+                <div class="metric-label">Critical</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">1</div>
+                <div class="metric-label">High</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">1</div>
+                <div class="metric-label">Medium</div>
+            </div>
+        </div>
+    
+        <div class="vuln high">
+            <h3>#1 - SQL Injection (Error-Based)</h3>
+            <p><span class="severity" style="background-color: #fd7e14;">HIGH</span></p>
+            <p><strong>Location:</strong> Login Form</p>
+            <p><strong>Payload:</strong> <code>' OR '1'='1</code></p>
+            <p><strong>Description:</strong> SQL error messages exposed in response</p>
+            <p><strong>Impact:</strong> Attacker can extract database information</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>Disable detailed error messages in production. Use generic error pages.</div>
+            </div>
+        </div>
+        
+        <div class="vuln critical">
+            <h3>#2 - SQL Injection</h3>
+            <p><span class="severity" style="background-color: #dc3545;">CRITICAL</span></p>
+            <p><strong>Location:</strong> Login Form (username field)</p>
+            <p><strong>Payload:</strong> <code>' OR '1'='1' --</code></p>
+            <p><strong>Description:</strong> SQL injection allows authentication bypass</p>
+            <p><strong>Impact:</strong> Attacker can bypass login and access any account</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>Use parameterized queries (prepared statements) instead of string concatenation. Never trust user input.</div>
+            </div>
+        </div>
+        
+        <div class="vuln critical">
+            <h3>#3 - Stored XSS</h3>
+            <p><span class="severity" style="background-color: #dc3545;">CRITICAL</span></p>
+            <p><strong>Location:</strong> Product Reviews (comment field)</p>
+            <p><strong>Payload:</strong> <code><script>alert('XSS')</script></code></p>
+            <p><strong>Description:</strong> JavaScript code executed in product reviews</p>
+            <p><strong>Impact:</strong> Attacker can steal cookies, hijack sessions, or deface pages for all users</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>Remove |safe filter from templates. Always escape user input before rendering. Use Content Security Policy headers.</div>
+            </div>
+        </div>
+        
+        <div class="vuln critical">
+            <h3>#4 - Broken Access Control (IDOR)</h3>
+            <p><span class="severity" style="background-color: #dc3545;">CRITICAL</span></p>
+            <p><strong>Location:</strong> /orders endpoint (user_id parameter)</p>
+            <p><strong>Payload:</strong> <code>?user_id=2</code></p>
+            <p><strong>Description:</strong> Can view other users' orders by changing user_id parameter</p>
+            <p><strong>Impact:</strong> Any authenticated user can access any other user's private data</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>Verify user owns the resource before displaying it. Check session user_id matches requested user_id.</div>
+            </div>
+        </div>
+        
+        <div class="vuln medium">
+            <h3>#5 - Account Enumeration</h3>
+            <p><span class="severity" style="background-color: #ffc107;">MEDIUM</span></p>
+            <p><strong>Location:</strong> Login Form</p>
+            <p><strong>Payload:</strong> <code>Compare error messages for valid vs invalid usernames</code></p>
+            <p><strong>Description:</strong> Login form reveals whether usernames exist through different error messages</p>
+            <p><strong>Impact:</strong> Attackers can enumerate valid usernames to build targeted attack lists</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>Use identical error messages for all login failures: "Invalid username or password"</div>
+            </div>
+        </div>
+        
+        <div class="vuln critical">
+            <h3>#6 - Plaintext Password Storage</h3>
+            <p><span class="severity" style="background-color: #dc3545;">CRITICAL</span></p>
+            <p><strong>Location:</strong> Database (users table)</p>
+            <p><strong>Payload:</strong> <code>Found plaintext password: adm***</code></p>
+            <p><strong>Description:</strong> Passwords are stored in plaintext without hashing</p>
+            <p><strong>Impact:</strong> If database is compromised, all user passwords are immediately exposed</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>Hash passwords using bcrypt with salt. Never store plaintext passwords.</div>
+            </div>
+        </div>
+        
+    </body>
+    </html>
+    

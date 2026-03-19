@@ -1,0 +1,66 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Security Scan Report - VulnShop</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+            .header { background: #2c3e50; color: white; padding: 30px; border-radius: 5px; }
+            .summary { background: white; padding: 20px; margin: 20px 0; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .vuln { background: white; padding: 20px; margin: 20px 0; border-radius: 5px; border-left: 5px solid; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+            .critical { border-left-color: #dc3545; }
+            .high { border-left-color: #fd7e14; }
+            .medium { border-left-color: #ffc107; }
+            .low { border-left-color: #17a2b8; }
+            .severity { display: inline-block; padding: 5px 15px; border-radius: 3px; color: white; font-weight: bold; }
+            .metric { display: inline-block; margin: 10px 20px 10px 0; }
+            .metric-value { font-size: 36px; font-weight: bold; color: #2c3e50; }
+            .metric-label { color: #7f8c8d; }
+            .remediation { background: #e8f5e9; padding: 15px; margin: 10px 0; border-left: 4px solid #4caf50; border-radius: 3px; }
+            .remediation-title { font-weight: bold; color: #2e7d32; margin-bottom: 5px; }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>🔒 VulnShop Security Scan Report</h1>
+            <p>Target: http://127.0.0.1:5000</p>
+            <p>Scan Date: 2026-03-19 15:33:04</p>
+            <p>Scanner: VulnShop Security Scanner v2.0</p>
+        </div>
+        
+        <div class="summary">
+            <h2>Executive Summary</h2>
+            <div class="metric">
+                <div class="metric-value">1</div>
+                <div class="metric-label">Total Vulnerabilities</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">1</div>
+                <div class="metric-label">Critical</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">0</div>
+                <div class="metric-label">High</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">0</div>
+                <div class="metric-label">Medium</div>
+            </div>
+        </div>
+    
+        <div class="vuln critical">
+            <h3>#1 - Plaintext Password Storage</h3>
+            <p><span class="severity" style="background-color: #dc3545;">CRITICAL</span></p>
+            <p><strong>Location:</strong> Database (users table)</p>
+            <p><strong>Payload:</strong> <code>Found plaintext password: adm***</code></p>
+            <p><strong>Description:</strong> Passwords are stored in plaintext without hashing</p>
+            <p><strong>Impact:</strong> If database is compromised, all user passwords are immediately exposed</p>
+            <div class="remediation">
+                <div class="remediation-title">✅ Remediation:</div>
+                <div>Hash passwords using bcrypt with salt. Never store plaintext passwords.</div>
+            </div>
+        </div>
+        
+    </body>
+    </html>
+    
