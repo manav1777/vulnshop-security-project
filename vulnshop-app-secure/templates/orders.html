@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}My Orders - VulnShop{% endblock %}
+{% block content %}
+<div class="container">
+    <h2>Orders for: {{ username }} (User ID: {{ user_id }})</h2>
+    
+    <div class="alert alert-info mt-3">
+        <strong>🔓 Broken Access Control Test:</strong><br>
+        Try changing the user_id in the URL to see other users' orders!<br>
+        Example: <code>/orders?user_id=1</code> or <code>/orders?user_id=2</code>
+    </div>
+    
+    {% if orders %}
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Order Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order[0] }}</td>
+                    <td>{{ order[1] }}</td>
+                    <td>{{ order[2] }}</td>
+                    <td>${{ "%.2f"|format(order[3]) }}</td>
+                    <td>{{ order[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted mt-4">No orders found for this user.</p>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

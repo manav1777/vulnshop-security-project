@@ -1,14 +1,32 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_talisman import Talisman
 import sqlite3
 import os
+import bcrypt
+import secrets
 
 app = Flask(__name__)
-app.secret_key = 'vulnerable_secret_key_12345'
+app.secret_key = secrets.token_hex(32)
 
-DATABASE = 'vulnshop.db'
+csp = {
+    'default-src': "'self'",
+    'script-src': "'self'",
+    'style-src': ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+}
+Talisman(app, content_security_policy=csp, force_https=False)
+
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+DATABASE = 'vulnshop_secure.db'
+
+def get_db():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
 
 def init_db():
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
     
     cursor.execute('''
@@ -25,7 +43,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
+            password_hash TEXT NOT NULL,
             email TEXT
         )
     ''')
@@ -71,9 +89,28 @@ def init_db():
     
     cursor.execute('SELECT COUNT(*) FROM users')
     if cursor.fetchone()[0] == 0:
+        password_hash = bcrypt.hashpw('admin123'.encode('utf-8'), bcrypt.gensalt())
         cursor.execute(
-            'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
-            ('admin', 'admin123', 'admin@vulnshop.com')
+            'INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?)',
+            ('admin', password_hash, 'admin@vulnshop.com')
+        )
+        
+        password_hash_bob = bcrypt.hashpw('password123'.encode('utf-8'), bcrypt.gensalt())
+        cursor.execute(
+            'INSERT INTO users (username, password_hash, email) VALUES (?, ?, ?)',
+            ('bob', password_hash_bob, 'bob@example.com')
+        )
+    
+    cursor.execute('SELECT COUNT(*) FROM orders')
+    if cursor.fetchone()[0] == 0:
+        orders = [
+            (1, 1, 2, 2599.98),
+            (1, 3, 1, 79.99),
+            (2, 2, 3, 89.97),
+        ]
+        cursor.executemany(
+            'INSERT INTO orders (user_id, product_id, quantity, total_price) VALUES (?, ?, ?, ?)',
+            orders
         )
     
     conn.commit()
@@ -88,7 +125,7 @@ def home():
 
 @app.route('/products')
 def products():
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM products')
     products = cursor.fetchall()
@@ -97,15 +134,12 @@ def products():
 
 @app.route('/product/<int:product_id>')
 def product_detail(product_id):
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
-    
     cursor.execute('SELECT * FROM products WHERE id = ?', (product_id,))
     product = cursor.fetchone()
-    
     cursor.execute('SELECT * FROM reviews WHERE product_id = ? ORDER BY created_at DESC', (product_id,))
     reviews = cursor.fetchall()
-    
     conn.close()
     
     if product:
@@ -119,18 +153,20 @@ def add_review(product_id):
     rating = request.form.get('rating')
     comment = request.form.get('comment')
     
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
+    if not username or not rating or not comment:
+        return "All fields required", 400
     
+    if not rating.isdigit() or int(rating) < 1 or int(rating) > 5:
+        return "Invalid rating", 400
+    
+    conn = get_db()
+    cursor = conn.cursor()
     cursor.execute(
         'INSERT INTO reviews (product_id, username, rating, comment) VALUES (?, ?, ?, ?)',
-        (product_id, username, rating, comment)
+        (product_id, username, int(rating), comment)
     )
-    
     conn.commit()
     conn.close()
-    
-    print(f"[DEBUG] Review added - Username: {username}, Comment: {comment}")
     
     return redirect(url_for('product_detail', product_id=product_id))
 
@@ -141,37 +177,22 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         
-        conn = sqlite3.connect(DATABASE)
+        if not username or not password:
+            error = "Invalid username or password"
+            return render_template('login.html', error=error)
+        
+        conn = get_db()
         cursor = conn.cursor()
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
+        user = cursor.fetchone()
+        conn.close()
         
-        # VULNERABILITY 1: SQL Injection (from Week 2)
-        query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
-        
-        print(f"[DEBUG] Executing query: {query}")
-        
-        try:
-            cursor.execute(query)
-            user = cursor.fetchone()
-            conn.close()
-            
-            if user:
-                # VULNERABILITY 2: Predictable Session - using user ID directly
-                session['user_id'] = user[0]
-                session['username'] = user[1]
-                print(f"[DEBUG] Session created - user_id: {user[0]}, username: {user[1]}")
-                return redirect('/dashboard')
-            else:
-                # VULNERABILITY 3: Account Enumeration - different error messages
-                cursor = sqlite3.connect(DATABASE).cursor()
-                cursor.execute(f"SELECT * FROM users WHERE username = '{username}'")
-                if cursor.fetchone():
-                    error = "Incorrect password"
-                else:
-                    error = "Username does not exist"
-                cursor.close()
-        except sqlite3.Error as e:
-            conn.close()
-            error = f"Database error: {str(e)}"
+        if user and bcrypt.checkpw(password.encode('utf-8'), user['password_hash']):
+            session['user_id'] = user['id']
+            session['username'] = user['username']
+            return redirect('/dashboard')
+        else:
+            error = "Invalid username or password"
     
     return render_template('login.html', error=error)
 
@@ -186,18 +207,12 @@ def orders():
     if 'user_id' not in session:
         return redirect('/login')
     
-    # VULNERABILITY 4: Broken Access Control
-    # Get user_id from URL parameter instead of session
-    user_id = request.args.get('user_id', session['user_id'])
+    user_id = session['user_id']
     
-    conn = sqlite3.connect(DATABASE)
+    conn = get_db()
     cursor = conn.cursor()
-    
-    # Get user info
     cursor.execute('SELECT username FROM users WHERE id = ?', (user_id,))
     user = cursor.fetchone()
-    
-    # Get orders for this user
     cursor.execute('''
         SELECT orders.id, products.name, orders.quantity, orders.total_price, orders.order_date
         FROM orders
@@ -206,12 +221,9 @@ def orders():
         ORDER BY orders.order_date DESC
     ''', (user_id,))
     orders = cursor.fetchall()
-    
     conn.close()
     
-    print(f"[DEBUG] Viewing orders for user_id: {user_id}")
-    
-    return render_template('orders.html', orders=orders, username=user[0] if user else 'Unknown', user_id=user_id)
+    return render_template('orders.html', orders=orders, username=user['username'] if user else 'Unknown', user_id=user_id)
 
 @app.route('/logout')
 def logout():
@@ -219,5 +231,5 @@ def logout():
     return redirect('/')
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5001))  # Changed to 5001
+    port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', debug=False, port=port)

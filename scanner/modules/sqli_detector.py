@@ -41,9 +41,15 @@ class SQLiDetector:
                     print(f"{Fore.RED}[!] VULNERABLE! Payload: {payload}{Style.RESET_ALL}")
                     return  # Found vulnerability, no need to test more
                 
-                # Check for SQL errors in response
-                error_keywords = ['SQL', 'sqlite', 'syntax error', 'mysql', 'postgresql']
-                if any(keyword.lower() in response.text.lower() for keyword in error_keywords):
+                # Check for ACTUAL SQL errors (not CSP errors)
+                error_keywords = ['sqlite3', 'syntax error', 'near', 'unrecognized token']
+                response_lower = response.text.lower()
+                
+                # Ignore CSP-related errors
+                if 'content-security-policy' in response_lower or 'csp' in response_lower:
+                    continue
+                    
+                if any(keyword in response_lower for keyword in error_keywords):
                     vuln = {
                         'type': 'SQL Injection (Error-Based)',
                         'severity': 'HIGH',
@@ -59,7 +65,7 @@ class SQLiDetector:
                 print(f"{Fore.RED}[ERROR] {str(e)}{Style.RESET_ALL}")
         
         if not self.vulnerabilities:
-            print(f"{Fore.GREEN}[✓] No SQL injection vulnerabilities found in login{Style.RESET_ALL}")
+            print(f"{Fore.GREEN}[✓] No SQL injection vulnerabilities found{Style.RESET_ALL}")
     
     def get_results(self):
         """Return all found vulnerabilities"""

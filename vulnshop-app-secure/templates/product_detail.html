@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ product['name'] }} - VulnShop Secure{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h2>{{ product['name'] }}</h2>
+        <p class="lead">{{ product['description'] }}</p>
+        <p class="text-muted">Category: {{ product['category'] }}</p>
+        <h3 class="text-primary">${{ "%.2f"|format(product['price']) }}</h3>
+        
+        <hr class="my-4">
+        
+        <h3>Customer Reviews</h3>
+        
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ review['username'] }} - 
+                        {% for i in range(review['rating']) %}<span class="text-warning">★</span>{% endfor %}
+                        {% for i in range(5 - review['rating']) %}<span class="text-warning">☆</span>{% endfor %}
+                    </h5>
+                    <p class="card-text">{{ review['comment'] }}</p>
+                    <p class="text-muted small">{{ review['created_at'] }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted">No reviews yet. Be the first to review!</p>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5>Leave a Review</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/product/{{ product['id'] }}/review">
+                    <div class="mb-3">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-control" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Rating</label>
+                        <select class="form-control" name="rating" required>
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Your Review</label>
+                        <textarea class="form-control" name="comment" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Submit Review</button>
+                </form>
+                
+                <div class="alert alert-success mt-3">
+                    <strong>🔒 SECURE:</strong><br>
+                    XSS protection enabled! HTML is automatically escaped.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
