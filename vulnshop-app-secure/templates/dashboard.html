@@ -1,29 +1,51 @@
 {% extends "base.html" %}
 {% block title %}Dashboard - VulnShop Secure{% endblock %}
+
 {% block content %}
-<div class="text-center my-5">
-    <h1>Welcome, {{ username }}! 🎉</h1>
-    <div class="alert alert-success mt-4">
-        <strong>✅ Secure Login!</strong><br>
-        You are logged in as: <strong>{{ username }}</strong>
+<div class="row justify-content-center">
+
+    <div class="col-md-10">
+
+        <div class="text-center mb-4">
+            <h1>Welcome, {{ username }}! 🎉</h1>
+            <p class="lead">VulnShop Security Dashboard</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h4 class="mb-3">Account Status</h4>
+                <div class="alert alert-success mb-0">
+                    <strong>Secure Login Active</strong><br>
+                    Logged in as {{ username }}
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4 text-center">
+
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Orders</h5>
+                        <p class="text-muted">View your purchase history</p>
+                        <a href="/orders" class="btn btn-success">My Orders</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Session</h5>
+                        <p class="text-muted">Manage your login session</p>
+                        <a href="/logout" class="btn btn-secondary">Logout</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
-    
-    <div class="mt-4">
-        <a href="/orders" class="btn btn-success btn-lg">View My Orders</a>
-        <a href="/logout" class="btn btn-secondary btn-lg">Logout</a>
-    </div>
-    
-    <div class="alert alert-info mt-4">
-        <strong>🔒 Security Features Enabled:</strong><br>
-        <small>
-        ✅ Passwords hashed with bcrypt<br>
-        ✅ SQL injection protection (parameterized queries)<br>
-        ✅ XSS protection (output encoding)<br>
-        ✅ Access control enforced<br>
-        ✅ Generic error messages (no enumeration)<br>
-        ✅ HTTPOnly & Secure cookies<br>
-        ✅ Content Security Policy headers
-        </small>
-    </div>
+
 </div>
 {% endblock %}

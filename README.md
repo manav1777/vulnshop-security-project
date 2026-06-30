@@ -155,8 +155,8 @@ This project is built strictly for educational purposes to understand:
 ## Author
 
 **Manav Patel**
-Cybersecurity Student
-Drexel University
+
+Cybersecurity Student at Drexel University
 
 ---
 
