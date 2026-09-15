@@ -1,68 +1,144 @@
 # VulnShop Security Project
 
-## Overview
+**Vulnerable Web Application & Automated Security Testing Platform**
 
-VulnShop is a full stack cybersecurity learning platform designed to demonstrate common web application vulnerabilities and their secure implementations. It simulates real world attack and defense scenarios using a Flask based web application combined with an automated security scanner.
+VulnShop is a Flask-based cybersecurity learning platform built to demonstrate common web application vulnerabilities, their security impact, and approaches to secure implementation.
 
-This project helps visualize how vulnerabilities are introduced, how attackers exploit them, and how secure coding practices mitigate risks.
-
----
-
-## Features
-
-### Web Application
-
-* Product listing and product detail pages
-* User authentication system with session handling
-* Customer review system
-* Order history tracking
-* Session based login system
+The project combines a simulated e-commerce web application with an automated security scanner, allowing vulnerable application behavior and security testing techniques to be explored in a controlled environment.
 
 ---
+
+## Key Features
+
+### Vulnerable Web Application
+
+VulnShop provides a functional e-commerce-style application with:
+
+- Product listings and product detail pages
+- User authentication and session handling
+- Customer reviews
+- Order history
+- Session-based login functionality
 
 ### Security Demonstrations
 
-* SQL injection vulnerability simulation in login system
-* Cross site scripting safe review rendering
-* Broken access control (IDOR) simulation
-* Account enumeration behavior comparison
-* Plaintext vs secure data handling examples
+The application demonstrates web security concepts including:
+
+- SQL injection in authentication workflows
+- Cross-site scripting (XSS) and safe output rendering
+- Broken access control / IDOR
+- Account enumeration behavior
+- Insecure vs. secure data handling
+- Authentication and session security risks
+
+### Automated Security Scanner
+
+VulnShop includes a Python-based scanner for testing application security behavior.
+
+Scanner functionality includes:
+
+- SQL injection testing
+- Cross-site scripting testing
+- Access control testing
+- Authentication and session security checks
+- Automated vulnerability detection
+- HTML security reports
+- Severity classification
 
 ---
 
-### Security Scanner
+## How It Works
 
-* Automated vulnerability detection tool
-* SQL injection testing module
-* Cross site scripting detection module
-* Access control testing module
-* Authentication and session security checks
-* HTML report generation with severity classification
+```text
+                 VulnShop
+                     │
+          ┌──────────┴──────────┐
+          │                     │
+          ▼                     ▼
+   Flask Web App         Security Scanner
+          │                     │
+   ┌──────┴──────┐       ┌──────┴──────┐
+   │             │       │             │
+Authentication  SQLite   SQLi / XSS   Access Control
+Products        Database Auth Tests   Testing
+Reviews
+Orders
+          │                     │
+          └──────────┬──────────┘
+                     ▼
+              Security Report
+```
+
+The web application provides controlled vulnerable behaviors while the scanner sends security tests to the application and evaluates the responses.
+
+---
+
+## Security Concepts
+
+VulnShop explores several common areas of web application security:
+
+### SQL Injection
+
+Demonstrates how unsafe handling of user-controlled input can affect database queries and authentication logic.
+
+### Cross-Site Scripting (XSS)
+
+Explores unsafe user-generated content and the importance of safely rendering untrusted input.
+
+### Broken Access Control / IDOR
+
+Demonstrates how improperly enforced authorization can expose resources belonging to other users.
+
+### Authentication Security
+
+Explores authentication behavior, account enumeration, and session-related security concerns.
+
+### Secure Data Handling
+
+Compares insecure implementation patterns with safer approaches to handling application data.
 
 ---
 
 ## Tech Stack
 
-* Python
-* Flask
-* SQLite
-* HTML
-* CSS
-* Bootstrap
-* Jinja2 Templates
+### Backend
+
+- Python
+- Flask
+- SQLite
+
+### Frontend
+
+- HTML
+- CSS
+- Bootstrap
+- Jinja2
+
+### Security Testing
+
+- Python
+- Requests
+- Automated vulnerability testing
+- HTML report generation
 
 ---
 
 ## Project Structure
 
 ```text
-vulnshop-app
+vulnshop-security-project/
 │
 ├── app.py
 ├── scanner.py
 ├── vulnshop.db
 │
-├── templates
+├── modules/
+│   ├── sqli_detector.py
+│   ├── xss_detector.py
+│   ├── access_control.py
+│   └── auth_tester.py
+│
+├── templates/
 │   ├── base.html
 │   ├── index.html
 │   ├── products.html
@@ -71,99 +147,129 @@ vulnshop-app
 │   ├── dashboard.html
 │   └── orders.html
 │
-├── static
+├── static/
 │   └── style.css
 │
-├── modules
-│   ├── sqli_detector.py
-│   ├── xss_detector.py
-│   ├── access_control.py
-│   └── auth_tester.py
-│
-└── reports
+└── reports/
 ```
 
 ---
 
-## Security Concepts Covered
+## Running the Project
 
-* SQL Injection
-* Cross Site Scripting (XSS)
-* Broken Access Control (IDOR)
-* Authentication Flaws
-* Session Management Risks
-* Insecure Data Storage
-* Security Testing Automation
-
----
-
-## How to Run
-
-### 1. Install dependencies
+### 1. Clone the Repository
 
 ```bash
-pip install flask sqlite3 colorama requests
+git clone https://github.com/manav1777/vulnshop-security-project.git
+cd vulnshop-security-project
 ```
 
----
+### 2. Install Dependencies
 
-### 2. Run the web application
+If the repository contains a `requirements.txt` file:
+
+```bash
+pip install -r requirements.txt
+```
+
+Otherwise, install the required third-party packages:
+
+```bash
+pip install flask colorama requests
+```
+
+### 3. Start VulnShop
 
 ```bash
 python app.py
 ```
 
----
+Open:
 
-### 3. Open in browser
-
-```
+```text
 http://127.0.0.1:5001
 ```
 
----
+### 4. Run the Security Scanner
 
-### 4. Run security scanner
+With the application running, open another terminal and run:
 
 ```bash
 python scanner.py
 ```
 
----
-
-## Educational Purpose
-
-This project is built strictly for educational purposes to understand:
-
-* how vulnerabilities are introduced in real applications
-* how attackers exploit insecure code
-* how security scanners detect weaknesses
-* how secure coding practices mitigate risks
+The scanner tests supported security scenarios and generates security findings based on the application's responses.
 
 ---
 
-## Key Learning Outcomes
+## Security Testing Workflow
 
-* Web application security fundamentals
-* Backend development with Flask
-* Database design using SQLite
-* Security testing automation
-* Vulnerability analysis and reporting
+```text
+Start VulnShop
+      │
+      ▼
+Run Security Scanner
+      │
+      ▼
+Send Test Requests
+      │
+      ├── SQL Injection
+      ├── XSS
+      ├── Access Control
+      └── Authentication
+      │
+      ▼
+Analyze Responses
+      │
+      ▼
+Classify Findings
+      │
+      ▼
+Generate HTML Report
+```
 
 ---
 
-## Author
+## What This Project Demonstrates
 
-**Manav Patel**
+VulnShop demonstrates practical experience with:
 
-Cybersecurity Student at Drexel University
+- Web application security
+- Vulnerability analysis
+- Secure coding concepts
+- Automated security testing
+- Python and Flask development
+- SQLite database integration
+- Authentication and session security
+- Security report generation
 
 ---
 
 ## Future Improvements
 
-* Add password hashing using bcrypt
-* Implement role based access control
-* Deploy secure version to cloud
-* Add real time attack simulation dashboard
-* Improve scanner accuracy and coverage
+Potential future improvements include:
+
+- Password hashing with bcrypt
+- Role-based access control
+- Additional vulnerability scenarios
+- Real-time attack simulation dashboard
+- Expanded scanner coverage
+- Improved vulnerability classification
+- Additional security reporting
+
+---
+
+## Educational & Security Notice
+
+VulnShop is intentionally designed to demonstrate insecure application behavior.
+
+It should only be used in controlled environments for educational purposes and authorized security testing. The intentionally vulnerable components should not be deployed or exposed as production systems.
+
+---
+
+## Author
+
+**Manav Patel**  
+Cybersecurity Student at Drexel University
+
+[GitHub](https://github.com/manav1777) · [LinkedIn](https://linkedin.com/in/manavpatel017)
