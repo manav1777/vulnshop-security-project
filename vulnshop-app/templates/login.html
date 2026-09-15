@@ -1,31 +1,121 @@
 {% extends "base.html" %}
-{% block title %}Login - VulnShop{% endblock %}
+
+{% block title %}
+Login | VulnShop
+{% endblock %}
+
 {% block content %}
+
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="text-center">Login</h2>
-        
-        {% if error %}
-        <div class="alert alert-danger mt-3">{{ error }}</div>
-        {% endif %}
-        
-        <form method="POST" class="mt-4">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
-        
-        <div class="alert alert-info mt-4">
-            <strong>🔓 Test Credentials:</strong><br>
-            Normal: <code>admin / admin123</code><br>
-            SQL Injection: Try <code>admin' OR '1'='1' --</code> as username and <code>anything</code> for password!
+
+    <div class="col-md-7 col-lg-5">
+
+        <div class="section-title text-center">
+
+            <h1>
+                Authentication Lab
+            </h1>
+
+            <p>
+                Explore the application's authentication behavior
+                in a controlled environment.
+            </p>
+
         </div>
+
+
+        {% if error %}
+
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <div class="card">
+
+            <div class="card-body">
+
+                <form
+                    method="POST"
+                >
+
+                    <div class="mb-3">
+
+                        <label
+                            for="username"
+                            class="form-label"
+                        >
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="username"
+                            name="username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-4">
+
+                        <label
+                            for="password"
+                            class="form-label"
+                        >
+                            Password
+                        </label>
+
+                        <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+                        Sign In
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <div class="alert alert-info mt-4">
+
+            <strong>Authentication Lab</strong>
+
+            <br>
+
+            Normal test account:
+
+            <br>
+
+            <code>admin / admin123</code>
+
+            <br><br>
+
+            The application also contains an intentionally vulnerable
+            authentication flow for SQL injection testing.
+
+        </div>
+
     </div>
+
 </div>
+
 {% endblock %}

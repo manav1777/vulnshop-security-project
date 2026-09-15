@@ -1,69 +1,240 @@
 {% extends "base.html" %}
-{% block title %}{{ product[1] }} - VulnShop{% endblock %}
+
+{% block title %}
+{{ product[1] }} | VulnShop
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <h2>{{ product[1] }}</h2>
-        <p class="lead">{{ product[2] }}</p>
-        <p class="text-muted">Category: {{ product[4] }}</p>
-        <h3 class="text-primary">${{ "%.2f"|format(product[3]) }}</h3>
-        
-        <hr class="my-4">
-        
-        <h3>Customer Reviews</h3>
-        
-        {% if reviews %}
-            {% for review in reviews %}
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">{{ review[2] }} - 
-                        {% for i in range(review[3]) %}<span class="text-warning">★</span>{% endfor %}
-                        {% for i in range(5 - review[3]) %}<span class="text-warning">☆</span>{% endfor %}
-                    </h5>
-                    <p class="card-text">{{ review[4]|safe }}</p>
-                    <p class="text-muted small">{{ review[5] }}</p>
-                </div>
+
+<div class="row g-4">
+
+    <div class="col-lg-8">
+
+        <div class="section-title">
+
+            <div class="product-category">
+                {{ product[4] }}
             </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-muted">No reviews yet. Be the first to review!</p>
-        {% endif %}
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5>Leave a Review</h5>
+
+            <h1 class="mt-2">
+                {{ product[1] }}
+            </h1>
+
+            <p class="lead">
+                {{ product[2] }}
+            </p>
+
+            <div class="product-price">
+                ${{ "%.2f"|format(product[3]) }}
             </div>
-            <div class="card-body">
-                <form method="POST" action="/product/{{ product[0] }}/review">
-                    <div class="mb-3">
-                        <label class="form-label">Your Name</label>
-                        <input type="text" class="form-control" name="username" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Rating</label>
-                        <select class="form-control" name="rating" required>
-                            <option value="5">5 Stars</option>
-                            <option value="4">4 Stars</option>
-                            <option value="3">3 Stars</option>
-                            <option value="2">2 Stars</option>
-                            <option value="1">1 Star</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Your Review</label>
-                        <textarea class="form-control" name="comment" rows="4" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Submit Review</button>
-                </form>
-                
-                <div class="alert alert-warning mt-3">
-                    <strong>🔓 XSS Test:</strong><br>
-                    Try: <code>&lt;script&gt;alert('XSS!')&lt;/script&gt;</code>
-                </div>
-            </div>
+
         </div>
+
+
+        <hr class="my-4">
+
+
+        <div class="section-title mb-4">
+
+            <h2>
+                Customer Reviews
+            </h2>
+
+            <p>
+                Review rendering is intentionally included as part
+                of the application's web security demonstrations.
+            </p>
+
+        </div>
+
+
+        {% if reviews %}
+
+            {% for review in reviews %}
+
+            <div class="review-card">
+
+                <div class="d-flex justify-content-between align-items-start gap-3">
+
+                    <div>
+
+                        <div class="review-author">
+                            {{ review[2] }}
+                        </div>
+
+                        <div class="mt-1">
+
+                            {% for i in range(review[3]) %}
+                                <span class="text-warning">★</span>
+                            {% endfor %}
+
+                            {% for i in range(5 - review[3]) %}
+                                <span class="text-warning">☆</span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    <div class="review-date">
+                        {{ review[5] }}
+                    </div>
+
+                </div>
+
+
+                <div class="review-content">
+                    {{ review[4]|safe }}
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="text-muted">
+                No reviews yet. Be the first to review!
+            </p>
+
+        {% endif %}
+
     </div>
+
+
+    <div class="col-lg-4">
+
+        <div class="card">
+
+            <div class="card-header">
+                Leave a Review
+            </div>
+
+            <div class="card-body">
+
+                <form
+                    method="POST"
+                    action="/product/{{ product[0] }}/review"
+                >
+
+                    <div class="mb-3">
+
+                        <label
+                            for="username"
+                            class="form-label"
+                        >
+                            Your Name
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="username"
+                            name="username"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="rating"
+                            class="form-label"
+                        >
+                            Rating
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="rating"
+                            name="rating"
+                            required
+                        >
+
+                            <option value="5">
+                                5 Stars
+                            </option>
+
+                            <option value="4">
+                                4 Stars
+                            </option>
+
+                            <option value="3">
+                                3 Stars
+                            </option>
+
+                            <option value="2">
+                                2 Stars
+                            </option>
+
+                            <option value="1">
+                                1 Star
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="comment"
+                            class="form-label"
+                        >
+                            Your Review
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="comment"
+                            name="comment"
+                            rows="5"
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100"
+                    >
+                        Submit Review
+                    </button>
+
+                </form>
+
+
+                <div class="alert alert-warning mt-4 mb-0">
+
+                    <strong>XSS Demonstration</strong>
+
+                    <br>
+
+                    The review field is intentionally configured
+                    to demonstrate unsafe rendering behavior.
+
+                    <br><br>
+
+                    Example test payload:
+
+                    <br>
+
+                    <code>
+                        &lt;script&gt;alert('XSS!')&lt;/script&gt;
+                    </code>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
 {% endblock %}

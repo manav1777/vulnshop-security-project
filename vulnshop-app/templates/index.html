@@ -1,13 +1,166 @@
 {% extends "base.html" %}
-{% block title %}Home - VulnShop{% endblock %}
+
+{% block title %}
+VulnShop | Web Security Lab
+{% endblock %}
+
 {% block content %}
-<div class="text-center my-5">
-    <h1>Welcome to VulnShop! 🛒</h1>
-    <p class="lead">Your one-stop shop for learning web security vulnerabilities</p>
-    <div class="alert alert-warning mt-4">
-        <strong>⚠️ Cybersecurity Learning Platform”</strong><br>
-        This is a deliberately vulnerable application for learning cybersecurity.
+
+<section class="hero">
+
+    <div class="hero-label">
+        Cybersecurity Learning Platform
     </div>
-    <a href="/products" class="btn btn-primary btn-lg mt-3">Browse Products</a>
+
+    <h1>
+        Learn web security
+        <span>by breaking and fixing it.</span>
+    </h1>
+
+    <p class="hero-description">
+        VulnShop is an intentionally vulnerable Flask application
+        that demonstrates common web application security issues,
+        security testing techniques, and secure implementation
+        approaches in a controlled environment.
+    </p>
+
+
+    <div class="hero-actions">
+
+        <a
+            href="/products"
+            class="btn btn-primary"
+        >
+            Explore Application
+        </a>
+
+        <a
+            href="/login"
+            class="btn btn-outline-light"
+        >
+            Authentication Lab
+        </a>
+
+    </div>
+
+</section>
+
+
+<div class="security-notice mb-5">
+
+    <strong>Educational Security Lab</strong>
+
+    <br>
+
+    This application intentionally contains vulnerable behavior
+    for security education and testing. Do not use it as a
+    production application or test systems without authorization.
+
 </div>
+
+
+<section>
+
+    <div class="section-title">
+
+        <h2>
+            Security Concepts
+        </h2>
+
+        <p>
+            Explore common web application vulnerabilities and defensive concepts.
+        </p>
+
+    </div>
+
+
+    <div class="security-grid">
+
+        <div class="security-item">
+
+            <h3>
+                SQL Injection
+            </h3>
+
+            <p>
+                Explore how unsafe database queries can allow
+                attacker-controlled input to alter application behavior.
+            </p>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <h3>
+                Cross-Site Scripting
+            </h3>
+
+            <p>
+                Examine how untrusted user content can create
+                client-side security risks when output is not handled safely.
+            </p>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <h3>
+                Broken Access Control
+            </h3>
+
+            <p>
+                Understand how missing authorization checks can
+                expose resources belonging to other users.
+            </p>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <h3>
+                Authentication
+            </h3>
+
+            <p>
+                Explore authentication behavior, session handling,
+                and account enumeration concepts.
+            </p>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <h3>
+                Security Testing
+            </h3>
+
+            <p>
+                Use the accompanying scanner to test application
+                behavior and identify supported vulnerability scenarios.
+            </p>
+
+        </div>
+
+
+        <div class="security-item">
+
+            <h3>
+                Secure Remediation
+            </h3>
+
+            <p>
+                Compare vulnerable behavior with safer implementation
+                patterns to understand practical defenses.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
 {% endblock %}

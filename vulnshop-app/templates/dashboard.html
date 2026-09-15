@@ -1,7 +1,65 @@
 {% extends "base.html" %}
-{% block title %}Dashboard - VulnShop{% endblock %}
+
+{% block title %}
+Dashboard | VulnShop
+{% endblock %}
+
 {% block content %}
-<div class="text-center my-5">
-    <h1>Welcome, {{ username }}! 🎉</h1>
+
+<div class="hero py-4">
+
+    <div class="hero-label">
+        Authenticated Session
+    </div>
+
+    <h1>
+        Welcome, {{ username }}
+        <span>to VulnShop.</span>
+    </h1>
+
+    <p class="hero-description">
+        You are currently signed in to the educational application.
+        Explore the available workflows and security demonstrations.
+    </p>
+
+
+    <div class="hero-actions">
+
+        <a
+            href="/orders"
+            class="btn btn-primary"
+        >
+            View Orders
+        </a>
+
+        <a
+            href="/products"
+            class="btn btn-outline-light"
+        >
+            Browse Products
+        </a>
+
+        <a
+            href="/logout"
+            class="btn btn-secondary"
+        >
+            Logout
+        </a>
+
+    </div>
+
 </div>
+
+
+<div class="security-notice">
+
+    <strong>Security Testing Environment</strong>
+
+    <br>
+
+    This application is intentionally designed for exploring
+    authentication, session handling, and access-control concepts.
+
+</div>
+
 {% endblock %}
