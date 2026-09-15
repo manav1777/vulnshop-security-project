@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -26,103 +28,123 @@
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
+
 </head>
+
 
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-dark">
 
-        <div class="container">
+<nav class="navbar navbar-expand-lg navbar-dark">
 
-            <a
-                class="navbar-brand"
-                href="/"
-            >
-                VulnShop
-            </a>
+    <div class="container">
 
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarNav"
-                aria-controls="navbarNav"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <a
+            class="navbar-brand"
+            href="/"
+        >
+            VulnShop
+        </a>
+
+        <span class="brand-path">
+            / learn &gt; break &gt; fix
+        </span>
 
 
-            <div
-                class="collapse navbar-collapse"
-                id="navbarNav"
-            >
-
-                <ul class="navbar-nav ms-auto">
-
-                    <li class="nav-item">
-                        <a
-                            class="nav-link"
-                            href="/"
-                        >
-                            Home
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a
-                            class="nav-link"
-                            href="/products"
-                        >
-                            Products
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a
-                            class="nav-link"
-                            href="/login"
-                        >
-                            Login
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-        </div>
-
-    </nav>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
 
-    <main>
-        <div class="container page-container">
+        <div
+            class="collapse navbar-collapse"
+            id="navbarNav"
+        >
 
-            {% block content %}
-            {% endblock %}
+            <ul class="navbar-nav ms-auto">
 
-        </div>
-    </main>
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="/"
+                    >
+                        Home
+                    </a>
+
+                </li>
 
 
-    <footer>
+                <li class="nav-item">
 
-        <div class="container text-center">
+                    <a
+                        class="nav-link"
+                        href="/products"
+                    >
+                        Products
+                    </a>
 
-            <p>
-                VulnShop · Educational Web Security Lab
-            </p>
+                </li>
+
+
+                <li class="nav-item">
+
+                    <a
+                        class="nav-link"
+                        href="/login"
+                    >
+                        Login
+                    </a>
+
+                </li>
+
+            </ul>
 
         </div>
 
-    </footer>
+    </div>
+
+</nav>
 
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    ></script>
+<main>
+
+    <div class="container page-container">
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+</main>
+
+
+<footer>
+
+    <div class="container">
+
+        <p>
+            VulnShop / educational web security lab / authorized testing only
+        </p>
+
+    </div>
+
+</footer>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
 
 </body>
+
 </html>
